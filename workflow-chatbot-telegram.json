@@ -1,0 +1,260 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "queue-var",
+              "name": "queue",
+              "value": "={{ $json.message.text.trim().replace(/\\s*,\\s*/g, ',') + ',BR' }}",
+              "type": "string"
+            },
+            {
+              "id": "chatid-var",
+              "name": "chatId",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "number"
+            },
+            {
+              "id": "city-var",
+              "name": "cityName",
+              "value": "={{ $json.message.text.trim().split(',')[0].trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "6efe03f7-e7a0-43ff-96dd-c4e85d3059cb",
+              "name": "=appid",
+              "value": "=a46758be80a51f66d3a8cbc8e09f8348",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d55bed59-b1f9-481f-9d15-bbfd9d850120",
+      "name": "Formatar Entrada",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -656,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "check-cod",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8601e46c-06ef-4ce8-9b76-fa7c0f766a94",
+      "name": "Cidade Encontrada?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst cityName = $input.first().json.body.name;\nconst temp = Math.round($input.first().json.body.main.temp);\nconst message = `🌤️ A temperatura em ${cityName} é de ${temp}°C.`;\n\nreturn [{ json: { message, ok: true } }];"
+      },
+      "id": "3d7a80d6-6e50-4b70-9470-ace8fecaffe8",
+      "name": "Montar Mensagem (Fallback)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Formatar Entrada').item.json.chatId }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "id": "d22975f1-15aa-44cc-bef3-e75d0248e61d",
+      "name": "Enviar Temperatura",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        0
+      ],
+      "webhookId": "2b053205-b62a-48e2-99c5-3c6bc7f84639"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Formatar Entrada').item.json.chatId }}",
+        "text": "❌ Cidade não encontrada. Use o formato Cidade,UF (ex.: São Paulo,SP).",
+        "additionalFields": {}
+      },
+      "id": "11600f34-2290-4a06-8d49-b8c952fa3d09",
+      "name": "Enviar Erro",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        240
+      ],
+      "webhookId": "6c9f7d45-9026-4bbf-ab78-5cf0f27931a5"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "22ae2096-1bd7-4228-8c57-c2269976ed16",
+      "name": "Telegram Trigger1",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -848,
+        128
+      ],
+      "webhookId": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    {
+      "parameters": {
+        "url": "https://api.openweathermap.org/data/2.5/weather",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.queue }}"
+            },
+            {
+              "name": "units",
+              "value": "metric"
+            },
+            {
+              "name": "lang",
+              "value": "pt_br"
+            },
+            {
+              "name": "appid",
+              "value": "={{OPENWEATHER_API_KEY}}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "8758e66d-1f29-469b-98ee-1ac490397bcc",
+      "name": "OpenWeather1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -464,
+        128
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Formatar Entrada": {
+      "main": [
+        [
+          {
+            "node": "OpenWeather1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cidade Encontrada?": {
+      "main": [
+        [
+          {
+            "node": "Montar Mensagem (Fallback)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar Erro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar Mensagem (Fallback)": {
+      "main": [
+        [
+          {
+            "node": "Enviar Temperatura",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Formatar Entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenWeather1": {
+      "main": [
+        [
+          {
+            "node": "Cidade Encontrada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "31be1372-6bde-412d-b8c0-6051e2baf258",
+  "meta": {
+    "instanceId": "1c4adc540ee8bfe5c2d0edec80fda7dece6e765b0fd99ff4b57abbcbfd0e561f"
+  },
+  "nodeGroups": [],
+  "id": "qdaAOM1vNOgVEWlE",
+  "tags": []
+}
