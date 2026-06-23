@@ -49,10 +49,9 @@ Inserir o valor na variável: **OPENWEATHER_API_KEY**
 Como criar o Bot Telegram
 Abrir @BotFather
 Executar o comando: /newbot
+Copiar o token gerado(HTTP API) e no primeiro node do fluxo do n8n adiconar a sua credencial do Telegram.
 
-Copiar o token gerado(HTTP API)
-Criar credencial Telegram no N8N utilizando o token
-Como importar o Workflow
+**Como importar o Workflow**
 Abrir o N8N
 Selecionar Import Workflow
 Escolher o arquivo: **workflow-chatbot-telegram.json**
