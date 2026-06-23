@@ -52,13 +52,7 @@ Executar o comando: /newbot
 Copiar o token gerado(HTTP API)
 
 **Como importar o Workflow**
-Abrir o N8N
-Selecionar Import Workflow
-Escolher o arquivo: **workflow-chatbot-telegram.json**
-Configurar as credenciais do Telegram
-Salvar
-Ativar o workflow
-
+Abrir o N8N > Selecionar Import Workflow > Escolher o arquivo: **workflow-chatbot-telegram.json** > Configurar as credenciais do Telegram > Salvar > Ativar o workflow
 
 **Testes Recomendados**
 
