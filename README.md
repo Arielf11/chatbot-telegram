@@ -31,3 +31,62 @@ Fluxo de sucesso:
 
 Fluxo de erro:
 → Telegram Error
+
+**Variáveis de Ambiente**
+
+**Configure as seguintes variáveis no N8N:**
+
+**OPENWEATHER_API_KEY**=sua_chave_openweather
+
+**TELEGRAM_BOT_TOKEN**=seu_token_telegram
+
+**Como obter a chave OpenWeather**
+Criar conta em https://openweathermap.org
+Acessar API Keys
+Criar uma chave
+Inserir o valor na variável: **OPENWEATHER_API_KEY**
+
+Como criar o Bot Telegram
+Abrir @BotFather
+Executar o comando: /newbot
+
+Copiar o token gerado(HTTP API)
+Criar credencial Telegram no N8N utilizando o token
+Como importar o Workflow
+Abrir o N8N
+Selecionar Import Workflow
+Escolher o arquivo: **workflow-chatbot-telegram.json**
+Configurar as credenciais do Telegram
+Salvar
+Ativar o workflow
+
+**Testes Recomendados**
+
+**Teste 1**
+**Entrada:**
+Belo Horizonte,MG
+
+**Saída esperada:**
+🌤️ A temperatura em Belo Horizonte é de XX°C.
+
+**Teste 2**
+**Entrada:**
+Rio de Janeiro,RJ
+
+**Saída esperada:**
+🌤️ A temperatura em Rio de Janeiro é de XX°C.
+
+**Teste 3**
+**Entrada:**
+Curitiba,PR,
+
+**Saída esperada:**
+🌤️ A temperatura em Curitiba é de XX°C.
+
+**Teste de Erro**
+
+**Entrada:**
+CidadeInexistente,XX,BR
+
+**Saída esperada:
+**❌ Cidade não encontrada. Use o formato Cidade,UF,BR (ex.: São Paulo,SP,BR).
